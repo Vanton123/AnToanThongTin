@@ -2,7 +2,7 @@
 
 ## Hướng dẫn làm việc nhóm với Git
 
-README này dùng để thống nhất cách làm việc cho các Lab Computer Vision của nhóm.
+
 
 ---
 
