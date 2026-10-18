@@ -63,7 +63,7 @@ git pull origin main
 Ví dụ:
 
 ```bash
-git checkout -b feature/lab01-grayscale
+git checkout -b feature/cs1_attt
 ```
 
 Kiểm tra đang đứng ở branch nào:
@@ -99,13 +99,13 @@ git add .
 Commit:
 
 ```bash
-git commit -m "feat: add grayscale conversion"
+git commit -m "feat: add attt_BTL"
 ```
 
 Push branch lần đầu:
 
 ```bash
-git push -u origin feature/lab01-grayscale
+git push -u origin feature/.....
 ```
 
 Các lần sau:
@@ -136,14 +136,7 @@ Mở Issue được giao và đọc:
 - Checklist
 - Reviewer
 
-Khi hoàn thành từng mục, tick:
 
-```markdown
-- [x] Hoàn thành mục này
-- [ ] Chưa hoàn thành mục này
-```
-
-Chỉ tick khi đã code và test xong.
 
 ---
 
@@ -161,13 +154,6 @@ REVIEW
 DONE
 ```
 
-### Khi bắt đầu làm
-
-Chuyển Issue:
-
-```text
-TODO → IN PROGRESS
-```
 
 ### Khi code xong và tạo Pull Request
 
@@ -198,12 +184,6 @@ Sau khi push branch:
 ```text
 base: main
 compare: branch-của-bạn
-```
-
-4. Viết tiêu đề, ví dụ:
-
-```text
-[Lab 01] Grayscale Conversion - Tên thành viên
 ```
 
 5. Gán ít nhất 1 reviewer.
@@ -300,7 +280,6 @@ Sau đó có thể bắt đầu Issue mới.
 - [ ] Đã chuyển sang branch riêng
 - [ ] Đã kiểm tra bằng `git branch --show-current`
 - [ ] Đã đọc Issue
-- [ ] Đã chuyển Project sang `IN PROGRESS`
 
 ### Trước khi tạo PR
 
