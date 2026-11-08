@@ -1,103 +1,60 @@
-"""
-plot.py - Ve bieu do throughput va do tre tu CSV cua benchmark.py (TV1, Issue 4).
- 
-Moi bieu do co 2 thuat toan x (cac) moi truong; thanh sai so = do lech chuan.
- 
-Cach chay (mac dinh doc results/benchmark_may1.csv va benchmark_may2.csv):
-  python plot.py
-  python plot.py --csv results/benchmark_may1.csv results/benchmark_may2.csv --outdir ../thesis/charts
- 
-Dau ra: <outdir>/throughput.png va <outdir>/latency.png
-"""
-import argparse
+"""plot.py - Issue 4: Doc CSV bang pandas, ve bieu do throughput va latency."""
 import os
-import sys
- 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
- 
-HERE = os.path.dirname(os.path.abspath(__file__))  # thu muc chua plot.py (source/)
-SIZE_ORDER = ["1KB", "1MB", "10MB", "100MB"]
-ALGO_COLORS = {"AES-256-GCM": "#1f77b4", "ChaCha20-Poly1305": "#d95f02"}
-HATCHES = ["", "//", "..", "xx"]  # moi truong thu i dung hoa van thu i (de doc ca khi in den trang)
- 
- 
-def load(paths):
-    frames = []
-    for p in paths:
-        if not os.path.exists(p):
-            print(f"Canh bao: khong tim thay {p}, bo qua", file=sys.stderr)
-            continue
-        frames.append(pd.read_csv(p, encoding="utf-8-sig"))
-    if not frames:
-        sys.exit("Khong co file CSV nao de ve.")
-    df = pd.concat(frames, ignore_index=True)
-    need = {"environment", "algorithm", "size_label", "throughput_mean_MBps", "throughput_std_MBps",
-            "latency_mean_ms", "latency_std_ms"}
-    missing = need - set(df.columns)
-    if missing:
-        sys.exit(f"CSV thieu cot: {sorted(missing)}")
-    return df
- 
- 
-def grouped_bars(df, ycol, errcol, ylabel, title, out_path, log_y=False):
-    envs = list(dict.fromkeys(df["environment"]))
-    algos = [a for a in ALGO_COLORS if a in set(df["algorithm"])]
-    series = [(a, e) for e in envs for a in algos]
-    n = len(series)
-    width = 0.8 / n
-    fig, ax = plt.subplots(figsize=(11, 5.8))
-    for i, (algo, env) in enumerate(series):
-        sub = df[(df["algorithm"] == algo) & (df["environment"] == env)].set_index("size_label")
-        xs, ys, es = [], [], []
-        for j, s in enumerate(SIZE_ORDER):
-            if s in sub.index:
-                xs.append(j - 0.4 + width * (i + 0.5))
-                ys.append(sub.loc[s, ycol])
-                es.append(sub.loc[s, errcol])
-        ax.bar(xs, ys, width * 0.95, yerr=es, capsize=3,
-               color=ALGO_COLORS[algo], hatch=HATCHES[envs.index(env) % len(HATCHES)],
-               edgecolor="black", linewidth=0.6, label=f"{algo} - {env}", error_kw={"elinewidth": 1})
-    ax.set_xticks(range(len(SIZE_ORDER)))
-    ax.set_xticklabels(SIZE_ORDER)
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT_DIR = os.path.join(HERE, "..", "thesis", "charts")
+SIZES = ["1KB", "1MB", "10MB", "100MB"]
+
+
+def draw_chart(df, mean_col, std_col, ylabel, title, filename, log_scale=False):
+    series = [
+        ("AESGCM", "may1", "AESGCM - Máy 1 (Bật AES-NI)"),
+        ("ChaCha20Poly1305", "may1", "ChaCha20Poly1305 - Máy 1"),
+        ("AESGCM", "may2", "AESGCM - Máy 2 (Tắt AES-NI)"),
+        ("ChaCha20Poly1305", "may2", "ChaCha20Poly1305 - Máy 2"),
+    ]
+    width = 0.18
+    x_pos = range(len(SIZES))
+
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    for i, (algo, env, label) in enumerate(series):
+        sub = df[(df["algorithm"] == algo) & (df["env"] == env)].set_index("size").reindex(SIZES)
+        xs = [x + (i - 1.5) * width for x in x_pos]
+        ax.bar(xs, sub[mean_col], width, yerr=sub[std_col], capsize=3, label=label)
+
+    ax.set_xticks(list(x_pos))
+    ax.set_xticklabels(SIZES)
     ax.set_xlabel("Kích thước dữ liệu")
     ax.set_ylabel(ylabel)
     ax.set_title(title)
-    if log_y:
+    if log_scale:
         ax.set_yscale("log")
-    ax.grid(axis="y", linestyle=":", alpha=0.6, which="both" if log_y else "major")
-    ax.set_axisbelow(True)
-    # chua cho phia tren de legend khong che cot
-    top = ax.get_ylim()[1]
-    if log_y:
-        ax.set_ylim(top=top * 12)
-    else:
-        ax.set_ylim(0, top * 1.28)
-    ax.legend(fontsize=8.5, loc="upper right", ncol=2, framealpha=0.95)
+    ax.grid(axis="y", linestyle="--", alpha=0.5)
+    ax.legend()
     fig.tight_layout()
-    fig.savefig(out_path, dpi=200)
+    out_path = os.path.join(OUT_DIR, filename)
+    fig.savefig(out_path, dpi=150)
     plt.close(fig)
-    print(f"Da luu {out_path}")
- 
- 
+    print("Da luu:", out_path)
+
+
 def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--csv", nargs="+", default=[os.path.join(HERE, "results", "benchmark_may1.csv"),
-                                          os.path.join(HERE, "results", "benchmark_may2.csv")])
-    ap.add_argument("--outdir", default=os.path.join(HERE, "..", "thesis", "charts"))
-    args = ap.parse_args()
- 
-    df = load(args.csv)
-    os.makedirs(args.outdir, exist_ok=True)
-    grouped_bars(df, "throughput_mean_MBps", "throughput_std_MBps", "Throughput (MB/s)",
-                 "Throughput mã hóa AEAD theo kích thước dữ liệu (cao hơn là tốt hơn)",
-                 os.path.join(args.outdir, "throughput.png"))
-    grouped_bars(df, "latency_mean_ms", "latency_std_ms", "Độ trễ trung bình mỗi lần mã hóa (ms, thang log)",
-                 "Độ trễ mã hóa AEAD theo kích thước dữ liệu (thấp hơn là tốt hơn)",
-                 os.path.join(args.outdir, "latency.png"), log_y=True)
- 
- 
+    df1 = pd.read_csv(os.path.join(HERE, "results", "benchmark_may1.csv"))
+    df1["env"] = "may1"
+    df2 = pd.read_csv(os.path.join(HERE, "results", "benchmark_may2.csv"))
+    df2["env"] = "may2"
+    df = pd.concat([df1, df2], ignore_index=True)
+
+    os.makedirs(OUT_DIR, exist_ok=True)
+    draw_chart(df, "throughput_mean_MBps", "throughput_std_MBps",
+               "Throughput (MB/s)", "So sánh Throughput mã hóa AEAD", "throughput.png")
+    draw_chart(df, "latency_mean_ms", "latency_std_ms",
+               "Độ trễ trung bình (ms - thang log)", "So sánh Độ trễ mã hóa AEAD", "latency.png", log_scale=True)
+
+
 if __name__ == "__main__":
     main()
