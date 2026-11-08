@@ -1,7 +1,5 @@
 """nonce_sim.py - Issue 10: nonce bang bo dem va ngau nhien, mo phong va cham.
 
-Bam Run hoac chay:  python nonce_sim.py
-Seed = 2026 (ghi trong README). Ket qua ghi vao results/nonce_sim.csv
 """
 import csv
 import math

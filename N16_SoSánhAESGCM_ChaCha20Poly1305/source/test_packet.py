@@ -1,54 +1,57 @@
+"""test_packet.py - Issue 8: kiem thu pack va unpack (packet.py cua TV3)."""
+import os
 
-============================= test session starts ==============================
-platform linux -- Python 3.13.18, pytest-8.4.2, pluggy-1.7.0 -- /usr/bin/python3
-cachedir: .pytest_cache
-rootdir: /content
-plugins: langsmith-0.14.17, typeguard-4.6.0, anyio-4.16.0, platformdirs-4.14.3
-collecting ... collected 6 items
+import pytest
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM, ChaCha20Poly1305
 
-source/test_negative.py::test_tampered_ciphertext[AESGCM] FAILED         [ 16%]
-source/test_negative.py::test_tampered_ciphertext[ChaCha20Poly1305] PASSED [ 33%]
-source/test_negative.py::test_tampered_tag[AESGCM] FAILED                [ 50%]
-source/test_negative.py::test_tampered_tag[ChaCha20Poly1305] PASSED      [ 66%]
-source/test_negative.py::test_tampered_aad[AESGCM] FAILED                [ 83%]
-source/test_negative.py::test_tampered_aad[ChaCha20Poly1305] PASSED      [100%]
+import packet
 
-=================================== FAILURES ===================================
-_______________________ test_tampered_ciphertext[AESGCM] _______________________
+NONCE = bytes(range(12))
+TAG = b"T" * 16
 
-algorithm = <class 'cryptography.hazmat.bindings._rust.openssl.aead.AESGCM'>
 
-    @pytest.mark.parametrize("algorithm", [AESGCM, ChaCha20Poly1305])
-    def test_tampered_ciphertext(algorithm):
->       key = algorithm.generate_key()
-              ^^^^^^^^^^^^^^^^^^^^^^^^
-E       TypeError: AESGCM.generate_key() missing 1 required positional argument: 'bit_length'
+def test_valid_packet():
+    data = packet.pack(NONCE, b"hdr", b"abc", TAG)
+    assert packet.unpack(data) == (1, NONCE, b"hdr", b"abc", TAG)
 
-source/test_negative.py:8: TypeError
-__________________________ test_tampered_tag[AESGCM] ___________________________
 
-algorithm = <class 'cryptography.hazmat.bindings._rust.openssl.aead.AESGCM'>
+def test_empty_aad_and_ciphertext():
+    data = packet.pack(NONCE, b"", b"", TAG)
+    assert len(data) == 31
+    assert packet.unpack(data) == (1, NONCE, b"", b"", TAG)
 
-    @pytest.mark.parametrize("algorithm", [AESGCM, ChaCha20Poly1305])
-    def test_tampered_tag(algorithm):
->       key = algorithm.generate_key()
-              ^^^^^^^^^^^^^^^^^^^^^^^^
-E       TypeError: AESGCM.generate_key() missing 1 required positional argument: 'bit_length'
 
-source/test_negative.py:23: TypeError
-__________________________ test_tampered_aad[AESGCM] ___________________________
+@pytest.mark.parametrize("algorithm", [AESGCM, ChaCha20Poly1305])
+def test_packet_decrypts(algorithm):
+    # Ma hoa that, dong goi, tach goi, giai ma ra dung ban ro
+    key = os.urandom(32)
+    nonce = os.urandom(12)
+    out = algorithm(key).encrypt(nonce, b"du lieu", b"hdr")
+    data = packet.pack(nonce, b"hdr", out[:-16], out[-16:])
+    version, n, aad, ct, tag = packet.unpack(data)
+    assert algorithm(key).decrypt(n, ct + tag, aad) == b"du lieu"
 
-algorithm = <class 'cryptography.hazmat.bindings._rust.openssl.aead.AESGCM'>
 
-    @pytest.mark.parametrize("algorithm", [AESGCM, ChaCha20Poly1305])
-    def test_tampered_aad(algorithm):
->       key = algorithm.generate_key()
-              ^^^^^^^^^^^^^^^^^^^^^^^^
-E       TypeError: AESGCM.generate_key() missing 1 required positional argument: 'bit_length'
+def test_truncated_packet_rejected():
+    data = packet.pack(NONCE, b"hdr", b"abc", TAG)
+    with pytest.raises(ValueError):
+        packet.unpack(data[:10])
 
-source/test_negative.py:38: TypeError
-=========================== short test summary info ============================
-FAILED source/test_negative.py::test_tampered_ciphertext[AESGCM] - TypeError:...
-FAILED source/test_negative.py::test_tampered_tag[AESGCM] - TypeError: AESGCM...
-FAILED source/test_negative.py::test_tampered_aad[AESGCM] - TypeError: AESGCM...
-========================= 3 failed, 3 passed in 0.08s ==========================
+
+def test_wrong_version_rejected():
+    data = bytearray(packet.pack(NONCE, b"hdr", b"abc", TAG))
+    data[0] = 2
+    with pytest.raises(ValueError):
+        packet.unpack(bytes(data))
+
+
+def test_wrong_aad_length_rejected():
+    data = bytearray(packet.pack(NONCE, b"hdr", b"abc", TAG))
+    data[13:15] = (60000).to_bytes(2, "big")  # AAD dai hon ca goi
+    with pytest.raises(ValueError):
+        packet.unpack(bytes(data))
+
+
+def test_wrong_nonce_length_rejected():
+    with pytest.raises(ValueError):
+        packet.pack(b"short", b"hdr", b"abc", TAG)
