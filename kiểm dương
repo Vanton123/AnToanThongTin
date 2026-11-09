@@ -1,0 +1,25 @@
+import pytest
+import os
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM, ChaCha20Poly1305
+
+@pytest.mark.parametrize("algorithm", [AESGCM, ChaCha20Poly1305])
+def test_positive_encryption_decryption(algorithm):
+    """Kiểm thử dương: Mã hóa và giải mã thành công với dữ liệu hợp lệ."""
+    if algorithm == AESGCM:
+        key = algorithm.generate_key(bit_length=256)
+    else:
+        key = algorithm.generate_key()
+        
+    aead = algorithm(key)
+    nonce = os.urandom(12)
+    data = b"Payload du lieu quan trọng"
+    aad = b"Header tin nhan"
+    
+    # Mã hóa
+    ct = aead.encrypt(nonce, data, aad)
+    
+    # Giải mã
+    pt = aead.decrypt(nonce, ct, aad)
+    
+    # Xác nhận bản rõ khôi phục khớp tuyệt đối
+    assert pt == data
