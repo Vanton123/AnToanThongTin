@@ -1,1 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.17, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Acer\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Acer\AnToanThongTin\N16_SoSánhAESGCM_ChaCha20Poly1305\source
+collecting ... collected 8 items
 
+test_packet.py::test_valid_packet PASSED                                 [ 12%]
+test_packet.py::test_empty_aad_and_ciphertext PASSED                     [ 25%]
+test_packet.py::test_packet_decrypts[AESGCM] PASSED                      [ 37%]
+test_packet.py::test_packet_decrypts[ChaCha20Poly1305] PASSED            [ 50%]
+test_packet.py::test_truncated_packet_rejected PASSED                    [ 62%]
+test_packet.py::test_wrong_version_rejected PASSED                       [ 75%]
+test_packet.py::test_wrong_aad_length_rejected PASSED                    [ 87%]
+test_packet.py::test_wrong_nonce_length_rejected PASSED                  [100%]
+
+============================== 8 passed in 0.09s ==============================

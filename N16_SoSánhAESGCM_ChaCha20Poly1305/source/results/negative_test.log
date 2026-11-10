@@ -1,1 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.17, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Acer\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Acer\AnToanThongTin\N16_SoSánhAESGCM_ChaCha20Poly1305\source
+collecting ... collected 8 items
 
+test_negative.py::test_valid_data_decrypts[AESGCM] PASSED                [ 12%]
+test_negative.py::test_valid_data_decrypts[ChaCha20Poly1305] PASSED      [ 25%]
+test_negative.py::test_tampered_ciphertext[AESGCM] PASSED                [ 37%]
+test_negative.py::test_tampered_ciphertext[ChaCha20Poly1305] PASSED      [ 50%]
+test_negative.py::test_tampered_tag[AESGCM] PASSED                       [ 62%]
+test_negative.py::test_tampered_tag[ChaCha20Poly1305] PASSED             [ 75%]
+test_negative.py::test_tampered_aad[AESGCM] PASSED                       [ 87%]
+test_negative.py::test_tampered_aad[ChaCha20Poly1305] PASSED             [100%]
+
+============================== 8 passed in 0.07s ==============================
