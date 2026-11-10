@@ -14,8 +14,8 @@ def draw_chart(df, mean_col, std_col, ylabel, title, filename, log_scale=False):
     series = [
         ("AESGCM", "may1", "AESGCM - Máy 1 (Bật AES-NI)"),
         ("ChaCha20Poly1305", "may1", "ChaCha20Poly1305 - Máy 1"),
-        ("AESGCM", "may2", "AESGCM - Máy 2 (Tắt AES-NI)"),
-        ("ChaCha20Poly1305", "may2", "ChaCha20Poly1305 - Máy 2"),
+        ("AESGCM", "may2", "AESGCM - Cùng máy, tắt tăng tốc (Tắt AES-NI)"),
+        ("ChaCha20Poly1305", "may2", "ChaCha20Poly1305 - tắt tăng tốc"),
     ]
     width = 0.18
     x_pos = range(len(SIZES))

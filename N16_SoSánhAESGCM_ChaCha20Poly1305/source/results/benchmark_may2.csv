@@ -1,9 +1,9 @@
 cpu,os,python_version,cryptography_version,algorithm,size,repeats,latency_mean_ms,latency_std_ms,throughput_mean_MBps,throughput_std_MBps
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,AESGCM,1KB,10,0.013,0.0156,110.99,34.79
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,ChaCha20Poly1305,1KB,10,0.006,0.0078,252.14,78.94
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,AESGCM,1MB,10,5.2732,0.1643,189.8,5.82
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,ChaCha20Poly1305,1MB,10,1.5858,0.1335,634.58,52.65
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,AESGCM,10MB,10,66.6047,8.6023,152.41,19.67
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,ChaCha20Poly1305,10MB,10,22.2381,3.1147,457.28,60.73
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,AESGCM,100MB,5,749.7003,78.4096,134.6,14.55
-"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-10-10.0.22621-SP0,3.10.11,50.0.2,ChaCha20Poly1305,100MB,5,176.2759,8.983,568.55,30.94
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,AESGCM,1KB,10,0.0187,0.0192,71.15,21.06
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,ChaCha20Poly1305,1KB,10,0.011,0.0187,176.39,60.72
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,AESGCM,1MB,10,9.3025,1.7341,112.32,28.97
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,ChaCha20Poly1305,1MB,10,2.4608,0.2693,411.28,50.18
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,AESGCM,10MB,10,89.6051,10.8517,113.23,15.08
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,ChaCha20Poly1305,10MB,10,21.5915,5.3606,491.82,131.1
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,AESGCM,100MB,5,702.465,91.9521,144.58,21.37
+"Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",Windows-11-10.0.22621-SP0,3.13.17,50.0.2,ChaCha20Poly1305,100MB,5,231.0551,36.0981,441.26,68.22
