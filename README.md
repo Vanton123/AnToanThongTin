@@ -28,10 +28,12 @@ N16_SoSánhAESGCM_ChaCha20Poly1305/
 │   ├── test_negative.py
 │   ├── nonce_sim.py
 │   ├── packet.py
+|   ├── test_packet.py
 │   └── results/
 │       ├── benchmark_may1.csv
 │       ├── benchmark_may2.csv
 │       ├── negative_test.log
+|       ├── packet_test.log
 │       └── nonce_sim.csv
 ├── THESIS/
 │   ├── BaoCao.docx (hoặc .pdf)
